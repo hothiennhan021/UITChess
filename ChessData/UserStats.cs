@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Thống kê người chơi dùng cho màn Profile.
-    /// Chỉ là DTO, không có logic DB ở đây.
+    /// Đây chỉ là DTO – không chứa logic DB.
     /// </summary>
     public class UserStats
     {
@@ -16,24 +16,23 @@
         public int Losses { get; set; }
 
         /// <summary>
-        /// Tổng số ván đã chơi = Wins + Losses
+        /// Tổng số trận đã chơi.
         /// </summary>
         public int TotalGames => Wins + Losses;
 
         /// <summary>
-        /// Thời gian chơi tổng (phút)
+        /// Tổng thời gian chơi (phút).
         /// </summary>
         public int TotalPlayTimeMinutes { get; set; }
 
         /// <summary>
-        /// Tỉ lệ thắng (0–100). Nếu chưa chơi trận nào thì = 0.
+        /// Tỉ lệ thắng (0–100).
         /// </summary>
-        public double WinRate => TotalGames > 0
-            ? (double)Wins / TotalGames * 100.0
-            : 0.0;
+        public double WinRate =>
+            TotalGames == 0 ? 0.0 : (double)Wins / TotalGames * 100.0;
 
         /// <summary>
-        /// Danh hiệu (tùy bạn map theo Rank).
+        /// Danh hiệu của người chơi (dựa trên Rank).
         /// </summary>
         public int TitleId { get; set; }
         public string TitleName { get; set; } = "";

@@ -16,6 +16,7 @@ namespace MyTcpServer
         // [QUAN TRỌNG] Biến này để lưu ID người dùng sau khi đăng nhập thành công
         // Mặc định là 0 (chưa đăng nhập)
         public int UserId { get; set; } = 0;
+        public string Username { get; set; } = "";
 
         public ConnectedClient(TcpClient client)
         {
