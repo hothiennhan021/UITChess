@@ -13,6 +13,7 @@ namespace MyTcpServer
         public StreamWriter Writer { get; }
 
         public int UserId { get; set; } = 0;
+        public string Username { get; set; } = "";
 
         // [MỚI] Lưu Username để cập nhật Rank/Wins/Losses
         public string Username { get; set; } = "";
