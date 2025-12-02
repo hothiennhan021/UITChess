@@ -15,7 +15,6 @@ namespace MyTcpServer
         private static IConfiguration _config;
         private static FriendRepository _friendRepo;
         private static UserRepository _userRepo;
-        private static MatchRepository _matchRepo;
 
         // [MỚI] Repo cập nhật trận đấu
         private static MatchRepository _matchRepo;
