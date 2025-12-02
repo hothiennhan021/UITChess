@@ -14,7 +14,7 @@ namespace MyTcpServer
 
         public int UserId { get; set; } = 0;
 
-        // [MỚI] Lưu Username để cập nhật Rank/Wins/Losses
+        // Lưu Username để phục vụ các chức năng như cập nhật rank, thống kê, bạn bè, v.v.
         public string Username { get; set; } = "";
 
         public ConnectedClient(TcpClient client)
@@ -23,7 +23,10 @@ namespace MyTcpServer
             var stream = client.GetStream();
 
             Reader = new StreamReader(stream, Encoding.UTF8);
-            Writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = false };
+            Writer = new StreamWriter(stream, Encoding.UTF8)
+            {
+                AutoFlush = false // Chủ động Flush để tránh gửi lẻ ký tự
+            };
         }
 
         public async Task SendMessageAsync(string message)

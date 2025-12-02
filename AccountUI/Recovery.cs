@@ -7,7 +7,7 @@ namespace AccountUI
     public partial class Recovery : Form
     {
         private string otpCode = "";
-        public static string selectedEmail = "";   // ⬅ Lưu email để ResetPassword dùng lại
+        public static string selectedEmail = "";   
 
         private string connectionString =
             "Server=(localdb)\\MSSQLLocalDB;Database=NetChessDB;Trusted_Connection=True;TrustServerCertificate=True;";
