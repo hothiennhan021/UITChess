@@ -102,10 +102,114 @@ namespace MyTcpServer
             switch (cmd)
             {
                 // ======================
-                // REGISTER & LOGIN
+                //  OTP + REGISTER & LOGIN
                 // ======================
+
+                case "REQUEST_OTP":
+                    {
+                        if (parts.Length < 2)
+                            return "ERROR|Thiếu email.";
+
+                        string email = parts[1];
+
+                        try
+                        {
+                            // Kiểm tra email đã tồn tại chưa
+                            if (await _userRepo.EmailExistsAsync(email))
+                            {
+                                return "ERROR|Email đã tồn tại trong hệ thống.";
+                            }
+
+                            // Tạo OTP 6 chữ số
+                            var rnd = new Random();
+                            string otp = rnd.Next(100000, 999999).ToString();
+
+                            client.TempOtp = otp;
+                            client.PendingEmail = email;
+                            client.OtpExpire = DateTime.UtcNow.AddMinutes(5);
+                            client.IsOtpVerified = false;
+
+                            bool sent = await EmailService.SendOtpAsync(email, otp);
+                            if (!sent)
+                            {
+                                return "ERROR|Gửi OTP thất bại. Vui lòng thử lại.";
+                            }
+
+                            return "OTP_SENT|Mã OTP đã được gửi đến email của bạn.";
+                        }
+                        catch (Exception ex)
+                        {
+                            return "ERROR|" + ex.Message;
+                        }
+                    }
+
+                case "VERIFY_OTP":
+                    {
+                        if (parts.Length < 3)
+                            return "ERROR|Thiếu email hoặc mã OTP.";
+
+                        string email = parts[1];
+                        string otp = parts[2];
+
+                        if (client.PendingEmail == null || client.TempOtp == null)
+                        {
+                            return "ERROR|Bạn chưa yêu cầu mã OTP.";
+                        }
+
+                        if (!string.Equals(client.PendingEmail, email, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return "ERROR|Email không khớp với email đã gửi OTP.";
+                        }
+
+                        if (client.OtpExpire != default && client.OtpExpire < DateTime.UtcNow)
+                        {
+                            client.TempOtp = null;
+                            client.PendingEmail = null;
+                            client.IsOtpVerified = false;
+                            return "ERROR|Mã OTP đã hết hạn. Vui lòng yêu cầu lại.";
+                        }
+
+                        if (!string.Equals(client.TempOtp, otp, StringComparison.Ordinal))
+                        {
+                            return "ERROR|Mã OTP không chính xác.";
+                        }
+
+                        client.IsOtpVerified = true;
+                        return "OTP_OK|Xác minh OTP thành công.";
+                    }
+
                 case "REGISTER":
-                    return await _userRepo.RegisterUserAsync(parts[1], parts[2], parts[3], parts[4], parts[5]);
+                    {
+                        if (parts.Length < 6)
+                            return "ERROR|Thiếu tham số đăng ký.";
+
+                        string username = parts[1];
+                        string password = parts[2];
+                        string email = parts[3];
+                        string fullName = parts[4];
+                        string birthday = parts[5];
+
+                        // Bắt buộc phải xác minh OTP trước khi đăng ký
+                        if (!client.IsOtpVerified ||
+                            client.PendingEmail == null ||
+                            !string.Equals(client.PendingEmail, email, StringComparison.OrdinalIgnoreCase) ||
+                            (client.OtpExpire != default && client.OtpExpire < DateTime.UtcNow))
+                        {
+                            return "ERROR|Vui lòng xác minh OTP hợp lệ trước khi đăng ký.";
+                        }
+
+                        string res = await _userRepo.RegisterUserAsync(username, password, email, fullName, birthday);
+
+                        // Nếu đăng ký thành công thì xoá OTP
+                        if (res.StartsWith("REGISTER_SUCCESS"))
+                        {
+                            client.TempOtp = null;
+                            client.PendingEmail = null;
+                            client.IsOtpVerified = false;
+                        }
+
+                        return res;
+                    }
 
                 case "LOGIN":
                     {

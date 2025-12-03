@@ -14,8 +14,15 @@ namespace MyTcpServer
 
         public int UserId { get; set; } = 0;
 
-        // [MỚI] Lưu Username để cập nhật Rank/Wins/Losses
+        // Lưu Username để cập nhật Rank/Wins/Losses
         public string Username { get; set; } = "";
+
+        // ====== THÊM CHO OTP ======
+        public string TempOtp { get; set; } = null;          // Mã OTP tạm
+        public DateTime OtpExpire { get; set; }              // Thời gian hết hạn
+        public string PendingEmail { get; set; } = null;     // Email đang chờ xác thực
+        public bool IsOtpVerified { get; set; } = false;     // Đã xác minh OTP chưa
+        // ===========================
 
         public ConnectedClient(TcpClient client)
         {
