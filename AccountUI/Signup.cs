@@ -7,108 +7,176 @@ namespace AccountUI
 {
     public partial class Signup : Form
     {
+        private bool _otpVerified = false;
+
         public Signup()
         {
             InitializeComponent();
+
+            btnSendOtp.Click += btnSendOtp_Click;
+            btnVerifyOtp.Click += btnVerifyOtp_Click;
         }
 
+        // =======================
+        //         ĐĂNG KÝ
+        // =======================
         private void button1_Click(object sender, EventArgs e)
         {
-            // --- 1. Lấy dữ liệu từ TẤT CẢ các ô ---
-            string tentk = textBox1.Text;
-            string email = textBox2.Text;
-            string matkhau = textBox3.Text;
-            string xnmatkhau = textBox4.Text;
-            string fullName = txtFullName.Text; // Lấy từ control mới
-            string birthday = dtpBirthday.Value.ToString("yyyy-MM-dd"); // Lấy từ control mới
+            string username = textBox1.Text;
+            string email = txtEmail.Text;
+            string pass = textBox3.Text;
+            string pass2 = textBox4.Text;
+            string fullName = txtFullName.Text;
+            string birthday = dtpBirthday.Value.ToString("yyyy-MM-dd");
 
-            // --- 2. Kiểm tra dữ liệu (Giữ nguyên logic cũ của bạn) ---
-            if (!Regex.IsMatch(tentk, @"^[A-Za-z0-9]{6,24}$") || tentk == "Tên Đăng Nhập")
+            // ==== CHECK TÀI KHOẢN ====
+            if (!Regex.IsMatch(username, @"^[A-Za-z0-9]{6,24}$") || username == "Tên Đăng Nhập")
             {
-                MessageBox.Show("Vui lòng nhập tên tài khoản dài 6-24 ký tự...", "Chú Ý");
-                return;
-            }
-            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.]{3,20}@gmail.com(.vn|)$") || email == "Email")
-            {
-                MessageBox.Show("Vui lòng nhập đúng định dạng email @gmail.com!");
-                return;
-            }
-            if (fullName.Trim() == "" || fullName == "Họ và Tên")
-            {
-                MessageBox.Show("Vui lòng nhập họ và tên!");
-                return;
-            }
-            if (!Regex.IsMatch(matkhau, @"^[A-Za-z0-9]{6,24}$") || matkhau == "Mật Khẩu")
-            {
-                MessageBox.Show("Vui lòng nhập MẬT KHẨU dài 6-24 ký tự...", "Lỗi");
-                return;
-            }
-            if (xnmatkhau != matkhau)
-            {
-                MessageBox.Show("Vui lòng xác nhận mật khẩu chính xác!");
+                MessageBox.Show("Tên tài khoản phải 6-24 ký tự không dấu!", "Lỗi");
                 return;
             }
 
-            // --- 3. Không kiểm tra SQL ở client, để server xử lý ---
+            // ==== CHECK EMAIL (mới) ====
+            if (!Regex.IsMatch(email, @"^[^@\s]+@gmail\.com(\.vn)?$") || email == "Email")
+            {
+                MessageBox.Show("Email không hợp lệ!", "Lỗi");
+                return;
+            }
+
+            // ==== CHECK HỌ TÊN ====
+            if (fullName == "" || fullName == "Họ và Tên")
+            {
+                MessageBox.Show("Vui lòng nhập họ tên!", "Lỗi");
+                return;
+            }
+
+            // ==== CHECK MẬT KHẨU ====
+            if (!Regex.IsMatch(pass, @"^[A-Za-z0-9]{6,24}$") || pass == "Mật Khẩu")
+            {
+                MessageBox.Show("Mật khẩu phải 6-24 ký tự!", "Lỗi");
+                return;
+            }
+
+            if (pass != pass2)
+            {
+                MessageBox.Show("Xác nhận mật khẩu không đúng!", "Lỗi");
+                return;
+            }
+
+            // ==== OTP CHƯA XÁC MINH ====
+            if (!_otpVerified)
+            {
+                MessageBox.Show("Bạn phải xác minh OTP trước khi đăng ký!", "Chú ý");
+                return;
+            }
 
             try
             {
-                // --- 4. Tạo request theo giao thức đã thống nhất ---
-                string request = $"REGISTER|{tentk}|{matkhau}|{email}|{fullName}|{birthday}";
+                string req = $"REGISTER|{username}|{pass}|{email}|{fullName}|{birthday}";
+                string res = ClientSocket.SendAndReceive(req);
 
-                // --- 5. Gửi và nhận phản hồi (ClientSocket tự Connect bên trong) ---
-                string response = ClientSocket.SendAndReceive(request);
-
-                if (string.IsNullOrWhiteSpace(response))
+                if (string.IsNullOrWhiteSpace(res))
                 {
-                    MessageBox.Show("Server không phản hồi.", "Lỗi",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Server không phản hồi!", "Lỗi");
                     return;
                 }
 
-                // Dọn sạch chuỗi phản hồi
-                string raw = response.Trim();
-                string[] parts = raw.Split('|');
-                string command = parts[0].Trim().Replace("\uFEFF", string.Empty);
+                string[] p = res.Split('|');
 
-                // --- 6. Xử lý phản hồi ---
-                if (string.Equals(command, "REGISTER_SUCCESS", StringComparison.OrdinalIgnoreCase))
+                if (p[0] == "REGISTER_SUCCESS")
                 {
-                    string msg = (parts.Length > 1) ? parts[1] : "Đăng ký thành công!";
-                    MessageBox.Show(msg, "Thông báo",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close(); // Đóng form đăng ký
+                    MessageBox.Show("Đăng ký thành công!", "OK");
+                    this.Close();
                 }
-                else if (string.Equals(command, "ERROR", StringComparison.OrdinalIgnoreCase))
+                else if (p[0] == "ERROR")
                 {
-                    string msg = (parts.Length > 1) ? parts[1] : "Đăng ký thất bại.";
-                    MessageBox.Show(msg, "Đăng ký thất bại",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(p.Length > 1 ? p[1] : "Lỗi đăng ký.", "Lỗi");
                 }
                 else
                 {
-                    MessageBox.Show("Phản hồi không hợp lệ từ server: " + response,
-                        "Lỗi server", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Lỗi phản hồi từ server: " + res);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi kết nối hoặc server chưa chạy: " + ex.Message, "Lỗi");
+                MessageBox.Show("Lỗi kết nối server: " + ex.Message);
             }
         }
 
-        // --- CÁC HÀM SỰ KIỆN (Giữ nguyên) ---
+        // =======================
+        //         GỬI OTP
+        // =======================
+        private void btnSendOtp_Click(object sender, EventArgs e)
+        {
+            string email = txtEmail.Text.Trim();
+
+            if (!Regex.IsMatch(email, @"^[^@\s]+@gmail\.com(\.vn)?$"))
+            {
+                MessageBox.Show("Email không hợp lệ!", "Lỗi");
+                return;
+            }
+
+            string res = ClientSocket.SendAndReceive($"REQUEST_OTP|{email}");
+
+            if (res.StartsWith("OTP_SENT"))
+            {
+                MessageBox.Show("OTP đã được gửi vào email!", "Thành công");
+                _otpVerified = false;
+            }
+            else if (res.StartsWith("ERROR"))
+            {
+                string[] p = res.Split('|');
+                MessageBox.Show(p.Length > 1 ? p[1] : "Lỗi gửi OTP");
+            }
+            else
+            {
+                MessageBox.Show("Lỗi phản hồi từ server: " + res);
+            }
+        }
+
+        // =======================
+        //        XÁC MINH OTP
+        // =======================
+        private void btnVerifyOtp_Click(object sender, EventArgs e)
+        {
+            string email = txtEmail.Text.Trim();
+            string otp = txtOtp.Text.Trim();
+
+            if (otp == "" || otp == "Nhập mã OTP")
+            {
+                MessageBox.Show("Bạn chưa nhập OTP!", "Lỗi");
+                return;
+            }
+
+            string res = ClientSocket.SendAndReceive($"VERIFY_OTP|{email}|{otp}");
+
+            if (res.StartsWith("OTP_OK"))
+            {
+                MessageBox.Show("Xác minh OTP thành công!", "OK");
+                _otpVerified = true;
+            }
+            else if (res.StartsWith("ERROR"))
+            {
+                string[] p = res.Split('|');
+                MessageBox.Show(p.Length > 1 ? p[1] : "OTP sai hoặc hết hạn!", "Lỗi");
+                _otpVerified = false;
+            }
+            else
+            {
+                MessageBox.Show("Phản hồi không hợp lệ: " + res);
+            }
+        }
+
+        // =======================
+        //     CODE CŨ (GIỮ NGUYÊN)
+        // =======================
 
         private void button2_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Quay Lại ?", "Chú Ý", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
-            {
+            if (MessageBox.Show("Quay lại?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 this.Close();
-            }
         }
 
-        // Các hàm Enter/Leave cho Tên Đăng Nhập
         private void textBox1_Enter(object sender, EventArgs e)
         {
             if (textBox1.Text == "Tên Đăng Nhập")
@@ -127,26 +195,24 @@ namespace AccountUI
             }
         }
 
-        // Các hàm Enter/Leave cho Email
         private void textBox2_Enter(object sender, EventArgs e)
         {
-            if (textBox2.Text == "Email")
+            if (txtEmail.Text == "Email")
             {
-                textBox2.Text = "";
-                textBox2.ForeColor = Color.DarkSlateBlue;
+                txtEmail.Text = "";
+                txtEmail.ForeColor = Color.DarkSlateBlue;
             }
         }
 
         private void textBox2_Leave(object sender, EventArgs e)
         {
-            if (textBox2.Text == "")
+            if (txtEmail.Text == "")
             {
-                textBox2.Text = "Email";
-                textBox2.ForeColor = Color.Gray;
+                txtEmail.Text = "Email";
+                txtEmail.ForeColor = Color.Gray;
             }
         }
 
-        // --- HÀM MỚI: Enter/Leave cho Họ và Tên ---
         private void TxtFullName_Enter(object sender, EventArgs e)
         {
             if (txtFullName.Text == "Họ và Tên")
@@ -164,16 +230,14 @@ namespace AccountUI
                 txtFullName.ForeColor = Color.Gray;
             }
         }
-        // ------------------------------------
 
-        // Các hàm Enter/Leave cho Mật khẩu
         private void textBox3_Enter(object sender, EventArgs e)
         {
             if (textBox3.Text == "Mật Khẩu")
             {
                 textBox3.Text = "";
-                textBox3.ForeColor = Color.DarkSlateBlue;
                 textBox3.PasswordChar = '*';
+                textBox3.ForeColor = Color.DarkSlateBlue;
             }
         }
 
@@ -182,19 +246,18 @@ namespace AccountUI
             if (textBox3.Text == "")
             {
                 textBox3.Text = "Mật Khẩu";
-                textBox3.ForeColor = Color.Gray;
                 textBox3.PasswordChar = '\0';
+                textBox3.ForeColor = Color.Gray;
             }
         }
 
-        // Các hàm Enter/Leave cho Xác nhận Mật khẩu
         private void textBox4_Enter(object sender, EventArgs e)
         {
             if (textBox4.Text == "Xác Nhận Mật Khẩu")
             {
                 textBox4.Text = "";
-                textBox4.ForeColor = Color.DarkSlateBlue;
                 textBox4.PasswordChar = '*';
+                textBox4.ForeColor = Color.DarkSlateBlue;
             }
         }
 
@@ -203,12 +266,11 @@ namespace AccountUI
             if (textBox4.Text == "")
             {
                 textBox4.Text = "Xác Nhận Mật Khẩu";
-                textBox4.ForeColor = Color.Gray;
                 textBox4.PasswordChar = '\0';
+                textBox4.ForeColor = Color.Gray;
             }
         }
 
-        // Các hàm ẩn/hiện mật khẩu
         private void button_passwordhide_Click(object sender, EventArgs e)
         {
             if (textBox3.PasswordChar == '\0')
@@ -218,21 +280,21 @@ namespace AccountUI
             }
         }
 
-        private void button_passwordhide2_Click(object sender, EventArgs e)
-        {
-            if (textBox4.PasswordChar == '\0')
-            {
-                button_passwordshow2.BringToFront();
-                textBox4.PasswordChar = '*';
-            }
-        }
-
         private void button_passwordshow_Click(object sender, EventArgs e)
         {
             if (textBox3.PasswordChar == '*')
             {
                 button_passwordhide.BringToFront();
                 textBox3.PasswordChar = '\0';
+            }
+        }
+
+        private void button_passwordhide2_Click(object sender, EventArgs e)
+        {
+            if (textBox4.PasswordChar == '\0')
+            {
+                button_passwordshow2.BringToFront();
+                textBox4.PasswordChar = '*';
             }
         }
 
@@ -250,9 +312,22 @@ namespace AccountUI
 
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private void txtOtp_Enter(object sender, EventArgs e)
         {
+            if (txtOtp.Text == "Nhập mã OTP")
+            {
+                txtOtp.Text = "";
+                txtOtp.ForeColor = Color.DarkSlateBlue;
+            }
+        }
 
+        private void txtOtp_Leave(object sender, EventArgs e)
+        {
+            if (txtOtp.Text == "")
+            {
+                txtOtp.Text = "Nhập mã OTP";
+                txtOtp.ForeColor = Color.Gray;
+            }
         }
     }
 }

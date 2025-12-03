@@ -155,5 +155,29 @@ namespace ChessData
             cmd.Parameters.AddWithValue("@id", userId);
             cmd.ExecuteNonQuery();
         }
+
+        // ==============================
+        //  KIỂM TRA EMAIL TỒN TẠI
+        // ==============================
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.OpenAsync();
+
+                string sql = "SELECT COUNT(*) FROM Users WHERE Email=@e";
+                using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@e", email);
+
+                int count = (int)await cmd.ExecuteScalarAsync();
+                return count > 0;
+            }
+            catch
+            {
+                // Nếu lỗi DB thì coi như không tồn tại để tránh chặn nhầm
+                return false;
+            }
+        }
     }
 }
