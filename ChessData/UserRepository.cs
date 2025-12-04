@@ -13,6 +13,40 @@ namespace ChessData
         {
             _connectionString = connection;
         }
+        // ==============================
+        //  LẤY AVATAR
+        // ==============================
+        public async Task<byte[]?> GetAvatarAsync(string username)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            string sql = "SELECT Avatar FROM Users WHERE Username=@u";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@u", username);
+
+            object result = await cmd.ExecuteScalarAsync();
+            return result == DBNull.Value ? null : (byte[])result;
+        }
+
+        // ==============================
+        //  UPDATE AVATAR
+        // ==============================
+        public async Task UpdateAvatarAsync(string username, byte[] avatar)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.OpenAsync();
+
+            string sql = "UPDATE Users SET Avatar=@a WHERE Username=@u";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@a", avatar);
+            cmd.Parameters.AddWithValue("@u", username);
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
 
         // ==============================
         //  ĐĂNG KÝ

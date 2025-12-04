@@ -5,7 +5,7 @@
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Width="556"
-        Height="839"
+        Height="890"
         Background="#111111">
 
     <Border CornerRadius="25"
@@ -15,7 +15,6 @@
 
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <Grid Margin="20">
-
                 <StackPanel HorizontalAlignment="Center">
 
                     <!-- HEADER -->
@@ -26,19 +25,23 @@
                                Margin="0,10,0,25"
                                HorizontalAlignment="Center"/>
 
-                    <!-- AVATAR -->
-                    <Grid Margin="0,0,0,10">
-                        <Ellipse Width="180"
-                                 Height="180"
-                                 Stroke="#3A7BFF"
-                                 StrokeThickness="5">
-                            <Ellipse.Effect>
-                                <DropShadowEffect Color="#3A7BFF"
-                                                  BlurRadius="40"
-                                                  ShadowDepth="0" />
-                            </Ellipse.Effect>
+                    <!-- AVATAR (hình tròn) -->
+                    <Grid Margin="0,0,0,10" Width="180" Height="180">
+
+                        <!-- Vòng ngoài -->
+                        <Ellipse Stroke="#3A7BFF"
+                                 StrokeThickness="5"
+                                 Width="180" Height="180"
+                                 Fill="#111111"/>
+
+                        <!-- Ảnh avatar dạng ImageBrush -->
+                        <Ellipse Width="170" Height="170">
+                            <Ellipse.Fill>
+                                <ImageBrush x:Name="AvatarBrush" Stretch="Fill"/>
+                            </Ellipse.Fill>
                         </Ellipse>
 
+                        <!-- Chữ cái khi chưa có avatar -->
                         <TextBlock x:Name="lblAvatarLetter"
                                    FontSize="78"
                                    FontWeight="Bold"
@@ -47,20 +50,30 @@
                                    HorizontalAlignment="Center"/>
                     </Grid>
 
+                    <!-- NÚT ĐỔI AVATAR -->
+                    <Button Content="Đổi Avatar"
+                            Width="170"
+                            Height="45"
+                            FontSize="20"
+                            Background="#4da3ff"
+                            Foreground="White"
+                            Margin="0,0,0,20"
+                            Cursor="Hand"
+                            Click="ChangeAvatar_Click"/>
+
                     <!-- TITLE -->
                     <TextBlock x:Name="lblTitle"
-                               Text=""
                                FontSize="28"
                                FontWeight="Bold"
                                Foreground="#4da3ff"
-                               Margin="0,5,0,28"
+                               Margin="0,5,0,20"
                                HorizontalAlignment="Center"/>
 
                     <!-- In-Game Name -->
                     <Border Background="#222222"
                             Padding="22"
                             CornerRadius="12"
-                            Margin="0,0,0,25">
+                            Margin="0,0,0,20">
                         <StackPanel>
                             <TextBlock Text="Tên In-Game"
                                        Foreground="#AAAAAA"
@@ -73,7 +86,7 @@
                     </Border>
 
                     <!-- RANK -->
-                    <Grid Margin="0,0,0,25">
+                    <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -97,7 +110,7 @@
                     </Grid>
 
                     <!-- Wins / Losses -->
-                    <Grid Margin="0,0,0,25">
+                    <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -121,7 +134,7 @@
                     </Grid>
 
                     <!-- Play Time / Win Rate -->
-                    <Grid Margin="0,0,0,25">
+                    <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
@@ -156,7 +169,6 @@
                             Margin="0,10,0,20"
                             Cursor="Hand"/>
                 </StackPanel>
-
             </Grid>
         </ScrollViewer>
     </Border>
