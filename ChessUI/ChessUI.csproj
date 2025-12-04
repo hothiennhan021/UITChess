@@ -14,4 +14,50 @@
 	<ItemGroup>
 		<EmbeddedResource Include="Assets\*" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\Avatars\chess_avatar_1.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_10.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_2.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_3.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_4.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_5.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_6.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_7.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_8.png" />
+	  <None Remove="Assets\Avatars\chess_avatar_9.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Assets\Avatars\chess_avatar_1.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_10.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_2.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_3.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_4.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_5.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_6.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_7.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_8.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	  <Resource Include="Assets\Avatars\chess_avatar_9.png">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Resource>
+	</ItemGroup>
 </Project>
