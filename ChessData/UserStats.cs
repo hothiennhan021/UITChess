@@ -13,8 +13,6 @@
 
         public int TotalPlayTimeMinutes { get; set; }
 
-        public int Elo { get; set; }
-
         // Tỉ lệ thắng (tính trong code)
         public double WinRate => (Wins + Losses) == 0 ? 0 : (Wins * 100.0 / (Wins + Losses));
     }

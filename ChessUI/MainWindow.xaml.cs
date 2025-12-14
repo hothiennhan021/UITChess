@@ -88,8 +88,6 @@ namespace ChessUI
                     _hasOfferedDraw = false;
                     btnDraw.IsEnabled = true;
                     btnDraw.Content = "Xin Hòa";
-                    lblWhiteElo.Text = $"Elo: {e.WhiteElo}";
-                    lblBlackElo.Text = $"Elo: {e.BlackElo}";
                 });
 
                 DrawBoard(_localGameState.Board);
