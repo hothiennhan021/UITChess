@@ -385,18 +385,25 @@ namespace AccountUI
                 return;
             }
 
-            string res = ClientSocket.SendAndReceive($"REQUEST_OTP|{email}");
+            // 🔥 gọi đúng ClientSocket (tránh bị nhầm namespace)
+            string res = AccountUI.ClientSocket.SendAndReceive($"REQUEST_OTP|{email}");
+            res = res?.Trim() ?? "";
 
             if (res.StartsWith("OTP_SENT"))
             {
                 MessageBox.Show("OTP đã được gửi vào email!");
                 _otpVerified = false;
             }
+            else if (res.StartsWith("ERROR|"))
+            {
+                MessageBox.Show(res.Substring(6), "Lỗi");
+            }
             else
             {
-                MessageBox.Show("Lỗi gửi OTP!");
+                MessageBox.Show("Lỗi gửi OTP: " + res, "Lỗi");
             }
         }
+
 
         // ===================== VERIFY OTP (giữ logic) =====================
         private void btnVerifyOtp_Click(object sender, EventArgs e)

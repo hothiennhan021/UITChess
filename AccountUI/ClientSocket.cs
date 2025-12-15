@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
@@ -6,85 +7,65 @@ namespace AccountUI
 {
     public static class ClientSocket
     {
-        // Biến static để lưu giữ kết nối duy nhất
         private static TcpClient _client;
         private static NetworkStream _stream;
+        private static StreamReader _reader;
 
-        // Cấu hình Server
         private const string SERVER_IP = "127.0.0.1";
         private const int PORT = 8888;
 
-        // Hàm kết nối thông minh
         public static bool Connect(string ipAddress = SERVER_IP, int port = PORT)
         {
             try
             {
-                // [QUAN TRỌNG] Nếu đã có kết nối và đang sống -> KHÔNG TẠO MỚI
                 if (_client != null && _client.Connected)
-                {
                     return true;
-                }
 
-                // Nếu chưa có hoặc bị đứt -> Mới tạo lại
                 _client = new TcpClient();
                 var result = _client.BeginConnect(ipAddress, port, null, null);
-                var success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3));
-
-                if (!success) return false;
+                if (!result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3)))
+                    return false;
 
                 _client.EndConnect(result);
                 _stream = _client.GetStream();
+
+                // 🔥 THÊM reader để đọc theo dòng
+                _reader = new StreamReader(_stream, Encoding.UTF8, false, 1024, true);
+
                 return true;
             }
             catch
             {
                 _client = null;
                 _stream = null;
+                _reader = null;
                 return false;
             }
         }
 
         public static string SendAndReceive(string message)
         {
-            // 1. Tự động kết nối lại nếu lỡ rớt mạng
             if (_client == null || !_client.Connected)
             {
-                if (!Connect()) return "ERROR|Mất kết nối Server";
+                if (!Connect())
+                    return "ERROR|Mất kết nối Server";
             }
 
             try
             {
-                // [QUAN TRỌNG] Xả sạch dữ liệu cũ còn sót lại trong ống trước khi gửi lệnh mới
-                // Giúp tránh đọc nhầm tin nhắn của Timer hoặc lệnh trước đó
-                if (_stream.DataAvailable)
-                {
-                    byte[] garbage = new byte[4096];
-                    while (_stream.DataAvailable)
-                    {
-                        _stream.Read(garbage, 0, garbage.Length);
-                    }
-                }
-
-                // 2. Gửi tin nhắn (Thêm xuống dòng \n)
+                // GỬI
                 byte[] dataToSend = Encoding.UTF8.GetBytes(message + "\n");
                 _stream.Write(dataToSend, 0, dataToSend.Length);
                 _stream.Flush();
 
-                // 3. Nhận phản hồi
-                byte[] buffer = new byte[4096];
-                int bytesRead = _stream.Read(buffer, 0, buffer.Length);
+                // 🔥 ĐỌC THEO DÒNG (QUAN TRỌNG NHẤT)
+                string response = _reader.ReadLine();
 
-                if (bytesRead == 0)
-                {
-                    Disconnect();
-                    return "ERROR|Server đóng kết nối";
-                }
-
-                return Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
+                return response?.Trim() ?? "";
             }
             catch (Exception ex)
             {
-                Disconnect(); // Lỗi thì reset kết nối
+                // ❌ KHÔNG tự Disconnect ở đây
                 return "ERROR|Lỗi mạng: " + ex.Message;
             }
         }
@@ -93,12 +74,15 @@ namespace AccountUI
         {
             try
             {
+                _reader?.Close();
                 _stream?.Close();
                 _client?.Close();
-                _client = null;
-                _stream = null;
             }
             catch { }
+
+            _reader = null;
+            _stream = null;
+            _client = null;
         }
     }
 }

@@ -2,33 +2,23 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
 
 namespace AccountUI
 {
     public partial class Recovery : Form
     {
-        private string otpCode = "";
-        public static string selectedEmail = "";   // ⬅ Lưu email để ResetPassword dùng lại
-
-        private string connectionString =
-            "Server=(localdb)\\MSSQLLocalDB;Database=ChessDB;Trusted_Connection=True;TrustServerCertificate=True;";
+        public static string selectedEmail = "";
 
         public Recovery()
         {
             InitializeComponent();
-
-            // Bo góc + canh giữa card giống Signup
             Load += Recovery_Load;
             Resize += Recovery_Resize;
         }
 
-        // ================== UI: BO GÓC + CANH GIỮA CARD ==================
         private void Recovery_Load(object sender, EventArgs e)
         {
             CenterCard();
-
-            // Bo góc card và các nút giống style Signup
             MakeRounded(panelCard, 26);
             MakeRounded(btnGui, 20);
             MakeRounded(btnXacNhan, 20);
@@ -42,117 +32,80 @@ namespace AccountUI
 
         private void CenterCard()
         {
-            if (panelCard == null) return;
-
             panelCard.Left = (ClientSize.Width - panelCard.Width) / 2;
             panelCard.Top = (ClientSize.Height - panelCard.Height) / 2;
         }
 
         private void MakeRounded(Control c, int radius)
         {
-            if (c == null || c.Width <= 0 || c.Height <= 0) return;
-
             Rectangle rect = new Rectangle(0, 0, c.Width, c.Height);
-            using (GraphicsPath path = RoundedRect(rect, radius))
-            {
-                c.Region = new Region(path);
-            }
+            using GraphicsPath path = RoundedRect(rect, radius);
+            c.Region = new Region(path);
         }
 
         private GraphicsPath RoundedRect(Rectangle bounds, int radius)
         {
             int d = radius * 2;
             GraphicsPath path = new GraphicsPath();
-
             path.AddArc(bounds.X, bounds.Y, d, d, 180, 90);
             path.AddArc(bounds.Right - d, bounds.Y, d, d, 270, 90);
             path.AddArc(bounds.Right - d, bounds.Bottom - d, d, d, 0, 90);
             path.AddArc(bounds.X, bounds.Bottom - d, d, d, 90, 90);
-
             path.CloseFigure();
             return path;
         }
 
-        // ======================= LOGIC GỐC =======================
+        // ================= QUÊN MẬT KHẨU =================
 
-        // Kiểm tra email có trong DB
-        private bool CheckEmailInDB(string email)
-        {
-            try
-            {
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
-                    string sql = "SELECT COUNT(*) FROM Users WHERE Email = @e";
-
-                    using (SqlCommand cmd = new SqlCommand(sql, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@e", email);
-                        return (int)cmd.ExecuteScalar() > 0;
-                    }
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Không thể kết nối database!");
-                return false;
-            }
-        }
-
-        // Gửi OTP
-        private async void btnGui_Click(object sender, EventArgs e)
+        private void btnGui_Click(object sender, EventArgs e)
         {
             string email = txtEmail.Text.Trim();
-
-            if (email == "" || email == "Email")
+            if (email == "")
             {
                 MessageBox.Show("Vui lòng nhập Email!");
                 return;
             }
 
-            // Check email trong DB
-            if (!CheckEmailInDB(email))
+            string res = ClientSocket.SendAndReceive($"FORGOT_SEND_OTP|{email}");
+
+            if (string.IsNullOrWhiteSpace(res))
             {
-                MessageBox.Show("Email này không tồn tại trong hệ thống!");
+                MessageBox.Show("Không nhận được phản hồi từ server!");
                 return;
             }
 
-            // Tạo OTP
-            Random rd = new Random();
-            otpCode = rd.Next(100000, 999999).ToString();
-
-            string subject = "Mã Khôi Phục Mật Khẩu - CHESS ONLINE";
-            string body = $"Mã OTP của bạn là: {otpCode}";
-
-            bool sent = await EmailService.SendEmailAsync(email, subject, body);
-
-            if (sent)
+            if (res.StartsWith("OK"))
             {
+                selectedEmail = email;
                 MessageBox.Show("Đã gửi OTP, hãy kiểm tra email!");
-
-                selectedEmail = email;   // ⬅ Ghi nhớ email để reset mật khẩu
+            }
+            else if (res.StartsWith("ERROR|"))
+            {
+                MessageBox.Show(res.Substring(6));
             }
             else
             {
-                MessageBox.Show("Gửi email thất bại. Kiểm tra App Password Gmail!");
+                MessageBox.Show("Có lỗi xảy ra, vui lòng thử lại!");
             }
-        }
 
-        // Xác nhận OTP
+
+        }
         private void btnXacNhan_Click(object sender, EventArgs e)
         {
-            if (txtOTP.Text.Trim() == otpCode)
+            string otp = txtOTP.Text.Trim();
+
+            string res = ClientSocket.SendAndReceive(
+                $"FORGOT_VERIFY_OTP|{selectedEmail}|{otp}");
+
+            if (res == "OK")
             {
-                MessageBox.Show("OTP chính xác! Hãy đặt mật khẩu mới.");
-
-                Resetpassword f = new Resetpassword();
-                f.ShowDialog();
-
+                MessageBox.Show("OTP chính xác!");
+                new Resetpassword().ShowDialog();
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Sai OTP!");
+                MessageBox.Show(res);
             }
         }
 
