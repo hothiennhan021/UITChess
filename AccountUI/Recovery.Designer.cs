@@ -57,14 +57,6 @@ namespace AccountUI
             MaximizeBox = false;
             BackColor = Color.Black;
 
-            // nền dùng resource Bg (giống login)
-            try
-            {
-                BackgroundImage = Properties.Resources.Bg;
-                BackgroundImageLayout = ImageLayout.Stretch;
-            }
-            catch { }
-
             // ==== CARD BO TRÒN ====
             panelCard.CornerRadius = 26;
             panelCard.BackColor = Color.FromArgb(24, 24, 32);
@@ -78,11 +70,7 @@ namespace AccountUI
             pictureLogo.Size = new Size(56, 56);
             pictureLogo.Location = new Point(32, 24);
             pictureLogo.SizeMode = PictureBoxSizeMode.Zoom;
-            try
-            {
-                pictureLogo.Image = Properties.Resources.icon_knight;
-            }
-            catch { }
+            pictureLogo.Image = Properties.Resources.icon_knight;
 
             // ==== CHESS ONLINE ====
             lblAppName.AutoSize = true;

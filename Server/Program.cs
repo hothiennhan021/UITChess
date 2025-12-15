@@ -15,6 +15,8 @@ namespace MyTcpServer
         private static FriendRepository _friendRepo;
         private static UserRepository _userRepo;
         private static MatchRepository _matchRepo;
+        static Dictionary<string, (string otp, DateTime expire)> forgotOtps
+    = new Dictionary<string, (string, DateTime)>();
 
         static async Task Main(string[] args)
         {
@@ -104,6 +106,75 @@ namespace MyTcpServer
                 // ======================
                 //  OTP + REGISTER & LOGIN
                 // ======================
+                case "FORGOT_SEND_OTP":
+                    {
+                        if (parts.Length < 2)
+                            return "ERROR|Thiếu email";
+
+                        string email = parts[1];
+
+                        bool exists = await _userRepo.EmailExistsAsync(email);
+                        if (!exists)
+                            return "ERROR|Email chưa đăng ký tài khoản";
+
+                        string otp = new Random().Next(100000, 999999).ToString();
+                        forgotOtps[email] = (otp, DateTime.UtcNow.AddMinutes(5));
+
+                        bool sent = await EmailService.SendForgotPasswordOtpAsync(email, otp);
+                        if (!sent)
+                            return "ERROR|Gửi OTP thất bại";
+
+                        return "OK";   // ✅ BẮT BUỘC
+                    }
+
+
+                case "FORGOT_VERIFY_OTP":
+                    {
+                        string email = parts[1];
+                        string otp = parts[2];
+
+                        if (!forgotOtps.ContainsKey(email))
+                            return "ERROR|OTP không tồn tại";
+
+                        var info = forgotOtps[email];
+
+                        if (DateTime.UtcNow > info.expire)
+                        {
+                            forgotOtps.Remove(email);
+                            return "ERROR|OTP hết hạn";
+                        }
+
+                        return otp == info.otp ? "OK" : "ERROR|OTP sai";
+                    }
+                case "FORGOT_RESET_PASSWORD":
+                    {
+                        string email = parts[1];
+                        string newHash = parts[2];
+
+                        try
+                        {
+                            using var conn = new SqlConnection(
+                                _config.GetConnectionString("DefaultConnection"));
+                            conn.Open();
+
+                            var sqlCmd = new SqlCommand(
+                                "UPDATE Users SET PasswordHash=@p WHERE Email=@e", conn);
+
+                            sqlCmd.Parameters.AddWithValue("@p", newHash);
+                            sqlCmd.Parameters.AddWithValue("@e", email);
+
+                            int rows = sqlCmd.ExecuteNonQuery();
+                            forgotOtps.Remove(email);
+
+                            return rows > 0 ? "OK" : "ERROR|Email không tồn tại";
+                        }
+                        catch (Exception ex)
+                        {
+                            return "ERROR|" + ex.Message;
+                        }
+                    }
+
+
 
                 case "REQUEST_OTP":
                     {
