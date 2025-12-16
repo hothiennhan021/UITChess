@@ -344,17 +344,20 @@ namespace MyTcpServer
                     }
 
                 // ======================================================
-                //                   FRIEND SYSTEM (GIỮ LOGIC CŨ)
+                //                   FRIEND SYSTEM 
                 // ======================================================
 
-                // LỆNH CŨ CỦA CLIENT: FRIEND_SEARCH|username
-                // → Mặc định: Gửi lời mời kết bạn
+
                 case "FRIEND_SEARCH":
                     {
-                        return _friendRepo.SendFriendRequest(client.UserId, parts[1]);
+                        if (client.UserId <= 0) return "FRIEND_SEARCH_NOT_LOGGED_IN";
+
+                        string result = _friendRepo.SendFriendRequest(client.UserId, parts[1]);
+
+                        return "FRIEND_SEARCH_" + result;
                     }
 
-                // LỆNH MỚI: FRIEND_SEND|username (nếu phía client có dùng)
+
                 case "FRIEND_SEND":
                     {
                         return _friendRepo.SendFriendRequest(client.UserId, parts[1]);
@@ -380,7 +383,6 @@ namespace MyTcpServer
                 case "FRIEND_ACCEPT":
                     {
                         _friendRepo.AcceptFriend(int.Parse(parts[1]));
-                        // Giữ nguyên như bản cũ: client đang check chứa "FRIEND_ACCEPTED"
                         return "FRIEND_ACCEPTED";
                     }
 
