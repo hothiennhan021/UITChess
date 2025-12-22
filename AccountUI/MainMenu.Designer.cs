@@ -96,10 +96,10 @@ namespace AccountUI
             // PicLeaderboard
             // 
             PicLeaderboard.Image = (Image)resources.GetObject("PicLeaderboard.Image");
-            PicLeaderboard.Location = new Point(554, 192);
+            PicLeaderboard.Location = new Point(545, 207);
             PicLeaderboard.Margin = new Padding(4, 5, 4, 5);
             PicLeaderboard.Name = "PicLeaderboard";
-            PicLeaderboard.Size = new Size(46, 98);
+            PicLeaderboard.Size = new Size(55, 98);
             PicLeaderboard.TabIndex = 12;
             PicLeaderboard.TabStop = false;
             PicLeaderboard.Click += PicLeaderboard_Click;
@@ -166,6 +166,7 @@ namespace AccountUI
             lblChess.Size = new Size(209, 48);
             lblChess.TabIndex = 1;
             lblChess.Text = "KỲ VƯƠNG";
+            lblChess.Click += lblChess_Click;
             // 
             // lblOnline
             // 
@@ -173,7 +174,10 @@ namespace AccountUI
             lblOnline.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             lblOnline.ForeColor = Color.DeepSkyBlue;
             lblOnline.Location = new Point(104, 52);
-            lblOnline.Text = "ONLINE"; // <--- Đã sửa thành Tiếng Việt
+            lblOnline.Name = "lblOnline";
+            lblOnline.Size = new Size(86, 28);
+            lblOnline.TabIndex = 2;
+            lblOnline.Text = "ONLINE";
             // 
             // lblTitle
             // 
@@ -357,7 +361,7 @@ namespace AccountUI
             MaximizeBox = false;
             Name = "MainMenu";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Kỳ Vương Online - Sảnh Chờ"; // Đã Việt Hóa
+            Text = "Kỳ Vương Online - Sảnh Chờ";
             panelCard.ResumeLayout(false);
             panelCard.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)PicLeaderboard).EndInit();

@@ -139,7 +139,13 @@ namespace ChessUI.Services
                     case "ERROR": ErrorReceived?.Invoke(parts[1]); break;
                     case "WAITING": WaitingReceived?.Invoke(); break;
                     case "GAME_OVER": GameOverReceived?.Invoke(parts[1]); break; // Legacy
-                    case "ASK_RESTART": AskRestartReceived?.Invoke(); break;
+                    // --- [BỔ SUNG ĐỂ SỬA LỖI KHÔNG HIỆN THÔNG BÁO CHƠI LẠI] ---
+                    case "RESTART_ASK":     // Kiểm tra xem server gửi chuỗi nào
+                    case "RESTART_REQUEST": // Có thể server gửi cái này
+                    case "ASK_RESTART":     // Hoặc cái này (như trong code cũ)
+                        AskRestartReceived?.Invoke();
+                        break;
+
                     case "RESTART_DENIED": RestartDeniedReceived?.Invoke(); break;
                     case "ANALYSIS_DATA":
                         if (parts.Length >= 2) AnalysisDataReceived?.Invoke(parts[1]);

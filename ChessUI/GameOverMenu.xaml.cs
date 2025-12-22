@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using ChessLogic; // Đảm bảo đã Reference project ChessLogic
 
 namespace ChessUI
 {
     public partial class GameOverMenu : UserControl
     {
-        // Sự kiện để báo ra ngoài cho MainWindow biết
+        // Sự kiện để báo ra ngoài cho MainWindow biết người dùng chọn gì
         public event Action<Option> OptionSelected;
 
         public GameOverMenu()
@@ -15,31 +16,30 @@ namespace ChessUI
             InitializeComponent();
         }
 
-        // Hàm hiển thị thông tin (MainWindow sẽ gọi hàm này)
+        // Hàm hiển thị thông tin (MainWindow sẽ gọi hàm này khi hết cờ)
         public void ShowGameOver(string winner, string reason)
         {
             // 1. Xử lý hiển thị Người thắng
             if (winner == "Draw")
             {
                 WinnerText.Text = "HÒA CỜ";
-                WinnerText.Foreground = System.Windows.Media.Brushes.LightGray;
+                WinnerText.Foreground = Brushes.LightGray;
             }
             else
             {
                 string winnerName = (winner == "White") ? "TRẮNG" : "ĐEN";
                 WinnerText.Text = $"{winnerName} THẮNG";
 
-                // Đổi màu chữ tùy theo bên thắng (Trắng -> Trắng, Đen -> Xám/Đỏ tùy ý)
-                WinnerText.Foreground = (winner == "White")
-                    ? System.Windows.Media.Brushes.White
-                    : System.Windows.Media.Brushes.Gray;
+                // Đổi màu chữ tiêu đề cho đẹp (Trắng -> Trắng, Đen -> Xám/Đỏ)
+                WinnerText.Foreground = (winner == "White") ? Brushes.White : Brushes.Gray;
             }
 
             // 2. Dịch lý do sang Tiếng Việt
+            // Dù server gửi "Checkmate" hay "Timeout", ta đều hiển thị tiếng Việt
             string vietnameseReason = TranslateReason(reason);
             ReasonText.Text = vietnameseReason;
 
-            // 3. Reset trạng thái nút Chơi lại
+            // 3. Reset trạng thái nút Chơi lại (đề phòng bị khóa từ ván trước)
             if (BtnRestart != null)
             {
                 BtnRestart.IsEnabled = true;
@@ -48,9 +48,11 @@ namespace ChessUI
             }
         }
 
-        // Hàm phụ trợ để dịch các thuật ngữ cờ vua
+        // Hàm phụ trợ để dịch các thuật ngữ cờ vua sang Tiếng Việt
         private string TranslateReason(string reason)
         {
+            if (string.IsNullOrEmpty(reason)) return "";
+
             switch (reason)
             {
                 case "Checkmate":
@@ -59,6 +61,7 @@ namespace ChessUI
                     return "Hòa pat (Hết nước đi)";
                 case "Resignation":
                 case "Resign":
+                case "Opponent Resigned":
                     return "Đối thủ đầu hàng";
                 case "Timeout":
                 case "Time Out":
@@ -66,13 +69,14 @@ namespace ChessUI
                 case "Insufficient Material":
                     return "Không đủ quân chiếu bí";
                 case "Threefold Repetition":
-                    return "Lặp lại 3 lần";
+                    return "Lặp lại nước đi 3 lần";
                 case "50-Move Rule":
                     return "Luật 50 nước đi";
                 case "Draw Agreement":
+                case "Mutual Agreement":
                     return "Thỏa thuận hòa";
                 default:
-                    // Nếu không khớp từ nào thì hiển thị nguyên gốc
+                    // Nếu là lý do lạ hoặc đã là tiếng Việt rồi thì giữ nguyên
                     return reason;
             }
         }
@@ -88,7 +92,7 @@ namespace ChessUI
             }
         }
 
-        // --- CÁC SỰ KIỆN CLICK ---
+        // --- CÁC SỰ KIỆN CLICK (Gắn liền với file XAML) ---
 
         private void Restart_Click(object sender, RoutedEventArgs e)
         {

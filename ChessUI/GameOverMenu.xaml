@@ -13,6 +13,7 @@
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Margin" Value="10"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -26,6 +27,9 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#666"/>
                 </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
@@ -35,17 +39,15 @@
                 HorizontalAlignment="Center" VerticalAlignment="Center" 
                 Padding="20" MinWidth="300">
             <StackPanel>
-                <TextBlock x:Name="WinnerText" Text="TRẮNG THẮNG" Foreground="White" FontSize="28" FontWeight="Bold" 
+                <TextBlock x:Name="WinnerText" Text="KẾT THÚC" Foreground="White" FontSize="28" FontWeight="Bold" 
                            HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
-                <TextBlock x:Name="ReasonText" Text="Chiếu bí" Foreground="LightGray" FontSize="16" 
+                <TextBlock x:Name="ReasonText" Text="Lý do kết thúc" Foreground="LightGray" FontSize="16" 
                            HorizontalAlignment="Center" Margin="0,0,0,20" TextWrapping="Wrap"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button x:Name="BtnRestart" Content="CHƠI LẠI" Style="{StaticResource MenuButton}" Click="Restart_Click" Width="100"/>
-
                     <Button x:Name="BtnAnalyze" Content="PHÂN TÍCH" Style="{StaticResource MenuButton}" Click="Analyze_Click" Width="100"/>
-
                     <Button Content="THOÁT" Style="{StaticResource MenuButton}" Click="Exit_Click" Width="100"/>
                 </StackPanel>
             </StackPanel>

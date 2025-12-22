@@ -82,6 +82,10 @@ namespace ChessUI
         {
             _responseHandler.GameStarted += (s, e) =>
             {
+                //sua loi choi lai
+                _isGameOver = false;
+                _allowClose = false;
+                //sua loi choi lai
                 _myColor = e.MyColor;
                 _localGameState = new GameState(Player.White, e.Board);
 

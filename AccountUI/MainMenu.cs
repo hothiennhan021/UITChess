@@ -90,13 +90,13 @@ namespace AccountUI
             picKnight.Dock = DockStyle.Fill;
 
             // 1. Chữ KỲ VƯƠNG
-            lblChess.Text = "KỲ VƯƠNG ONLINE";
+            lblChess.Text = "KỲ VƯƠNG";
             lblChess.Font = new Font("Segoe UI", 24f, FontStyle.Bold);
             lblChess.ForeColor = Color.White;
             lblChess.AutoSize = true;
 
             // 2. Chữ TRỰC TUYẾN (Thay cho ONLINE)
-            lblOnline.Text = "TRỰC TUYẾN";
+            lblOnline.Text = "ONLINE";
             lblOnline.Font = new Font("Segoe UI", 11f, FontStyle.Bold); // Giảm size một chút vì chữ tiếng Việt dài hơn
             lblOnline.ForeColor = Color.DeepSkyBlue;
             lblOnline.AutoSize = true;
@@ -495,6 +495,9 @@ namespace AccountUI
             }
         }
 
-       
+        private void lblChess_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
