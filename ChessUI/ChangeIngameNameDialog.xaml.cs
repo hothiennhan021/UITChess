@@ -4,23 +4,34 @@ namespace ChessUI
 {
     public partial class ChangeIngameNameDialog : Window
     {
-        public string NewName { get; private set; }
+        // Thuộc tính để lấy tên mới ra bên ngoài
+        public string NewIngameName { get; private set; }
 
-        public ChangeIngameNameDialog(string current)
+        // Constructor: Cho phép truyền tên hiện tại vào (optional)
+        public ChangeIngameNameDialog(string currentName = "")
         {
             InitializeComponent();
-            txtIngame.Text = current;
+            txtIngame.Text = currentName; // Điền sẵn tên cũ
+            txtIngame.Focus();
         }
 
         private void Confirm_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtIngame.Text))
+            string input = txtIngame.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
             {
-                MessageBox.Show("Tên không được để trống!");
+                MessageBox.Show("Tên hiển thị không được để trống!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            NewName = txtIngame.Text.Trim();
+            if (input.Length > 20)
+            {
+                MessageBox.Show("Tên quá dài (tối đa 20 ký tự).", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            NewIngameName = input; // Lưu tên vào biến public
             DialogResult = true;
             Close();
         }

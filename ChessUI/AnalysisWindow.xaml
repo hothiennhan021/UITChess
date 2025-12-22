@@ -1,22 +1,18 @@
-﻿<Window x:Class="ChessUI.AnalysisWindow"
+<Window x:Class="ChessUI.AnalysisWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Phân Tích Trận Đấu" Height="700" Width="1000" Background="#202020" WindowStartupLocation="CenterScreen">
-
-    <Window.Resources>
-        <Style TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="BorderBrush" Value="#333"/>
-        </Style>
-    </Window.Resources>
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChessUI"
+        mc:Ignorable="d"
+        Title="Phân Tích Trận Đấu" Height="700" Width="1000"
+        Background="#202020"
+        Closing="AnalysisWindow_Closing">
 
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
 
         <Viewbox Grid.Column="0" Margin="0,0,10,0">
@@ -55,29 +51,25 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Thống Kê" Foreground="White" FontWeight="Bold"/>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Text="White" Foreground="White" HorizontalAlignment="Center"/>
-                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Black" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Thống Kê Ván Đấu" Foreground="White" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Trắng" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Đen" Foreground="White" HorizontalAlignment="Center"/>
 
-                    <TextBlock Grid.Row="1" Text="Brilliant" Foreground="#1AB5B8" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="wBrilliant" Grid.Row="1" Grid.Column="1" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image Source="Assets/Icons/brilliant.png" Grid.Row="1" Grid.Column="2" Width="20" Height="20"/>
-                    <TextBlock x:Name="bBrilliant" Grid.Row="1" Grid.Column="3" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Text="Xuất sắc" Foreground="#1AB5B8" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="wBrilliant" Grid.Row="1" Grid.Column="1" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="bBrilliant" Grid.Row="1" Grid.Column="3" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                    <TextBlock Grid.Row="2" Text="Best" Foreground="#6BC235" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="wBest" Grid.Row="2" Grid.Column="1" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image Source="Assets/Icons/best.png" Grid.Row="2" Grid.Column="2" Width="20" Height="20"/>
-                    <TextBlock x:Name="bBest" Grid.Row="2" Grid.Column="3" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="2" Text="Tốt nhất" Foreground="#6BC235" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="wBest" Grid.Row="2" Grid.Column="1" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="bBest" Grid.Row="2" Grid.Column="3" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                    <TextBlock Grid.Row="3" Text="Mistake" Foreground="#FFA333" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="wMistake" Grid.Row="3" Grid.Column="1" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image Source="Assets/Icons/mistake.png" Grid.Row="3" Grid.Column="2" Width="20" Height="20"/>
-                    <TextBlock x:Name="bMistake" Grid.Row="3" Grid.Column="3" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="3" Text="Sai lầm" Foreground="#FFA333" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="wMistake" Grid.Row="3" Grid.Column="1" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="bMistake" Grid.Row="3" Grid.Column="3" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                    <TextBlock Grid.Row="4" Text="Blunder" Foreground="#FA412D" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="wBlunder" Grid.Row="4" Grid.Column="1" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Image Source="Assets/Icons/blunder.png" Grid.Row="4" Grid.Column="2" Width="20" Height="20"/>
-                    <TextBlock x:Name="bBlunder" Grid.Row="4" Grid.Column="3" Text="-" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock Grid.Row="4" Text="Đi sót" Foreground="#FA412D" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="wBlunder" Grid.Row="4" Grid.Column="1" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="bBlunder" Grid.Row="4" Grid.Column="3" Text="0" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 </Grid>
             </Border>
 
@@ -117,9 +109,9 @@
                 </ListView>
             </Border>
 
-            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="❮ Prev" Width="80" Height="30" Click="btnPrev_Click" Background="#444" Foreground="White" Margin="5"/>
-                <Button Content="Next ❯" Width="80" Height="30" Click="btnNext_Click" Background="#444" Foreground="White" Margin="5"/>
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Button x:Name="btnPrev" Content="&lt; Trước" Width="80" Height="30" Margin="5" Click="btnPrev_Click"/>
+                <Button x:Name="btnNext" Content="Tiếp &gt;" Width="80" Height="30" Margin="5" Click="btnNext_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

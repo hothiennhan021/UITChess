@@ -1,7 +1,7 @@
 ﻿<Window x:Class="ChessUI.ProfileWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Player Profile"
+        Title="Hồ Sơ Người Chơi"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
         Width="962"
@@ -17,15 +17,13 @@
             <Grid Margin="20">
                 <StackPanel HorizontalAlignment="Center">
 
-                    <!-- HEADER -->
-                    <TextBlock Text="🎮 PLAYER PROFILE"
+                    <TextBlock Text="🎮 HỒ SƠ NGƯỜI CHƠI"
                                FontSize="34"
                                FontWeight="Bold"
                                Foreground="#3A7BFF"
                                Margin="0,10,0,25"
                                HorizontalAlignment="Center"/>
 
-                    <!-- AVATAR -->
                     <Grid Margin="0,0,0,10" Width="180" Height="180">
                         <Ellipse Stroke="#3A7BFF"
                                  StrokeThickness="5"
@@ -46,7 +44,6 @@
                                    HorizontalAlignment="Center"/>
                     </Grid>
 
-                    <!-- NÚT ĐỔI AVATAR -->
                     <Button Content="Đổi Avatar"
                             Width="170"
                             Height="45"
@@ -55,9 +52,16 @@
                             Foreground="White"
                             Margin="0,0,0,20"
                             Cursor="Hand"
-                            Click="ChangeAvatar_Click"/>
+                            Click="ChangeAvatar_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
-                    <!-- TITLE -->
                     <TextBlock x:Name="lblTitle"
                                FontSize="28"
                                FontWeight="Bold"
@@ -65,13 +69,12 @@
                                Margin="0,5,0,20"
                                HorizontalAlignment="Center"/>
 
-                    <!-- In-Game Name -->
                     <Border Background="#222222"
                             Padding="22"
                             CornerRadius="12"
                             Margin="0,0,0,20">
                         <StackPanel>
-                            <TextBlock Text="Tên In-Game"
+                            <TextBlock Text="Tên Hiển Thị"
                                        Foreground="#AAAAAA"
                                        FontSize="14"/>
                             <TextBlock x:Name="lblIngameName"
@@ -81,8 +84,7 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- ⭐ THÊM NÚT ĐỔI TÊN IN-GAME -->
-                    <Button Content="Đổi Tên In-Game"
+                    <Button Content="Đổi Tên Hiển Thị"
                             Width="200"
                             Height="45"
                             FontSize="20"
@@ -90,9 +92,16 @@
                             Foreground="White"
                             Margin="0,0,0,20"
                             Cursor="Hand"
-                            Click="ChangeIngameName_Click"/>
+                            Click="ChangeIngameName_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="10">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
-                    <!-- RANK -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -116,7 +125,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Wins / Losses -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -124,7 +132,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                            <TextBlock Text="Wins" Foreground="#AAAAAA"/>
+                            <TextBlock Text="Thắng" Foreground="#AAAAAA"/>
                             <TextBlock x:Name="lblWins"
                                        FontSize="24"
                                        FontWeight="Bold"
@@ -132,7 +140,7 @@
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                            <TextBlock Text="Losses" Foreground="#AAAAAA"/>
+                            <TextBlock Text="Thua" Foreground="#AAAAAA"/>
                             <TextBlock x:Name="lblLosses"
                                        FontSize="24"
                                        FontWeight="Bold"
@@ -140,7 +148,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Play Time / Win Rate -->
                     <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -164,7 +171,6 @@
                         </StackPanel>
                     </Grid>
 
-                    <!-- Close -->
                     <Button Content="Đóng"
                             Width="170"
                             Height="55"
@@ -174,7 +180,15 @@
                             FontWeight="Bold"
                             Click="Close_Click"
                             Margin="0,10,0,20"
-                            Cursor="Hand"/>
+                            Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="12">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
 
                 </StackPanel>
             </Grid>
