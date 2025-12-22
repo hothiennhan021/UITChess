@@ -17,7 +17,7 @@ namespace MyTcpServer
         private GameState _gameState;
         private readonly ChessTimer _gameTimer;
         private readonly ChatRoom _chatRoom;
-        private readonly string _connectionString = "Server=.;Database=ChessDB;Trusted_Connection=True;TrustServerCertificate=True;";
+        private readonly string _connectionString = "Server=tcp:netchess-sql-server.database.windows.net,1433;Initial Catalog=ChessDB;Persist Security Info=False;User ID=hothiennhan021;Password=Hai0987897187!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
         // Lưu lịch sử nước đi dạng UCI (vd: "e2e4") để gửi cho Client phân tích sau trận
         private readonly List<string> _moveHistory = new List<string>();
