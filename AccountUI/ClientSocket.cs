@@ -11,7 +11,7 @@ namespace AccountUI
         private static NetworkStream _stream;
         private static StreamReader _reader;
 
-        private const string SERVER_IP = "172.17.0.4";
+        private const string SERVER_IP = "20.2.251.78";
         private const int PORT = 8888;
 
         public static bool Connect(string ipAddress = SERVER_IP, int port = PORT)

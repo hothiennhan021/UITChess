@@ -157,7 +157,7 @@ namespace AccountUI
             try
             {
                 // Giữ nguyên Server theo yêu cầu
-                await ClientManager.ConnectToServerAsync("172.17.0.4", 8888);
+                await ClientManager.ConnectToServerAsync("20.2.251.78", 8888);
 
                 // Lưu ý: Chuỗi gửi đi (LOGIN) là giao thức nên giữ nguyên tiếng Anh để Server hiểu
                 string request = $"LOGIN|{tentk}|{matkhau}";
