@@ -17,7 +17,10 @@ namespace MyTcpServer
         private GameState _gameState;
         private readonly ChessTimer _gameTimer;
         private readonly ChatRoom _chatRoom;
-        private readonly string _connectionString = "Server=tcp:netchess-sql-server.database.windows.net,1433;Initial Catalog=ChessDB;Persist Security Info=False;User ID=hothiennhan021;Password=Hai0987897187!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        private readonly string _connectionString;
+       
+
+
 
         // Lưu lịch sử nước đi dạng UCI (vd: "e2e4") để gửi cho Client phân tích sau trận
         private readonly List<string> _moveHistory = new List<string>();
@@ -26,8 +29,10 @@ namespace MyTcpServer
         private bool _whiteWantsRematch = false;
         private bool _blackWantsRematch = false;
 
-        public GameSession(ConnectedClient p1, ConnectedClient p2)
+
+        public GameSession(ConnectedClient p1, ConnectedClient p2, string connectionString)
         {
+            _connectionString = connectionString;
             SessionId = Guid.NewGuid().ToString();
 
             // Random màu quân ngẫu nhiên cho công bằng
@@ -159,7 +164,7 @@ namespace MyTcpServer
             }
         }
 
-        private async void CheckGameOver()
+        private async Task CheckGameOver()
         {
             if (_gameState.IsGameOver())
             {
@@ -170,11 +175,12 @@ namespace MyTcpServer
                               (winner == Player.Black) ? "Black" : "Draw";
 
                 string reason = _gameState.Result.Reason.ToString();
-                OnGameEnded?.Invoke(this, winner, reason);
 
+                OnGameEnded?.Invoke(this, winner, reason);
                 await Broadcast($"GAME_OVER_FULL|{wStr}|{reason}");
             }
         }
+
 
         // --- CÁC LỆNH HỆ THỐNG ---
         public async Task HandleGameCommand(ConnectedClient client, string command)
