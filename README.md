@@ -5,5 +5,5 @@
 24520937 - Phạm Gia Lâm <br>
 24520829 - Nguyễn Huỳnh Đăng Khoa <br>
 24521888 - Nguyễn Xuân Trung <br>
-## Dowload Here:
+## Tải trò chơi tại link:
 https://hothiennhan021.github.io/KyVuongOnline/
